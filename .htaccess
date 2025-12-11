@@ -1,0 +1,6 @@
+# Activation du moteur de réécriture du serveur.
+RewriteEngine On
+
+# Réécriture de la règle,
+# Que la requête du cient soit redirigée vers le fichier index.php du dossier public
+RewriteRule ^(.*)$ public/index.php [L]
