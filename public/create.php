@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+require_once __DIR__ . "/../functions/db.php";
+
 //var_dump($_SERVER);
 //die();
 
@@ -78,7 +80,7 @@ $formError = [];
             $_SESSION['form_errors'] = $formError;
 
             // 4b. Sauvegarder les anciennes données provenant du formulaire en session
-
+            $_SESSION['old'] = $_POST;
             //Effectuer une redirection vers la page de laquelle proviennent les informations
             //Puis arrêter l'exécution du script.
             header('Location: create.php');
@@ -86,15 +88,23 @@ $formError = [];
         }
         // 5. Dans le cas contraire,
         //5a. Arrondir la note à un chiffre après la virgule,
+        $ratingRounded = null;
+        if (isset($_POST['rating']) && $_POST['rating'] !== "") {
+                $ratingRounded = round($_POST['rating'], 1);
+        }
 
         //6. Etablir une connexion avec la base de données
+        
 
         //7. Effectuer la requête d'insertion du nouveau film dans la table prévue "film"
+        insertFilm($ratingRounded, $_POST);
 
         //8. Générer le message flash de succès
-
+        $_SESSION['success'] = "Le film a été ajouté, bien joué Laurent maintenant va dormir !!! è_é";
         //9. Effectuer une redirection vers la page listant les films ajoutés (index.php)
         // Puis arrêter l'exécution du script.
+        header("Location: index.php");
+        die();
         }
        
         // Générons et sauvegardons le jeton de sécurité en session
@@ -133,15 +143,23 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                     <form method="post">
                         <div class="mb-3">
                             <label for="title">Titre <span class="text-danger">*</span></label>
-                            <input type="text" name="title" id="title" class="form-control" autofocus required>
+                            <input type="text" name="title" id="title" class="form-control" autofocus required value=
+                            "<?= isset($_SESSION['old']['title']) && !empty($_SESSION['old']['title']) ?
+                             htmlspecialchars($_SESSION['old']['title']) : ''; unset($_SESSION['old']['title']);?>">
                         </div>
                         <div class="mb-3">
                             <label for="rating">Note / 5</label>
-                            <input type="text" min="0" max="5" step=".5" inputmode="decimal" name="rating" id="rating" class="form-control">
+                            <input type="text" min="0" max="5" step=".5" inputmode="decimal" name="rating" id="rating" class="form-control" value=
+                            "<?= isset($_SESSION['old']['rating']) && !empty($_SESSION['old']['rating']) ?
+                             htmlspecialchars($_SESSION['old']['rating']) : ''; unset($_SESSION['old']['rating']);?>">
                         </div>
                         <div class="mb-3">
                             <label for="comment">laissez un commentaire</label>
-                            <textarea name="comment" id="comment" class="form-control" rows="4"></textarea>
+                            <textarea name="comment" id="comment" class="form-control" rows="4"><?= isset($_SESSION['old']['comment']) && !empty($_SESSION['old']['comment']) ?
+                             htmlspecialchars($_SESSION['old']['comment']) : ''; unset($_SESSION['old']['comment']);?></textarea>
+                             <small id="txt-counter">
+                                0 / 1000 caractères
+                             </small>
                         </div>
                         
                         <input type="hidden" name="csrf_token" value="<?=$_SESSION['csrf_token'];?>">

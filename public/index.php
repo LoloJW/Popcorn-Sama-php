@@ -1,3 +1,17 @@
+<?php
+    session_start();
+
+        require_once __DIR__ . "/../functions/db.php";
+    //1. Etablir une connexion avec la base de données
+
+    //2. Effectuer la requête de sélection de tous les films de la base de données .
+
+    $films = getFilms();
+
+    // var_dump($films); die();
+?>
+
+
 <?php $title = "Liste des films"?>
 <?php $description = "Découvrez la liste complète de mes films : notes, commentaires et fiches détaillées. Répertoire cinéma mis à jour régulièrement."?>
 <?php $keywords = "Cinéma, repertoire, film, dwwm22"?>
@@ -15,6 +29,41 @@
                 <i class="fa-solid fa-plus"></i>
             Ajouter film</a>
         </div>
+
+        <?php if(isset($_SESSION['success']) && !empty($_SESSION['success'])):?>
+            <!-- Affichage flash du message -->
+             <div class="text-center alert alert-success alert-dismissible fade show" role="alert">
+                <?= $_SESSION['success']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+             </div>
+             <?php unset($_SESSION['success']); ?>
+        <?php endif?>
+
+            <?php if(count($films) > 0) : ?>
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                        <?php foreach($films as $film) :?>
+                            <article class="film-card bg-white p-4 rounded shadow">
+                                <h2>Titre:<?= htmlspecialchars($film['title']); ?></h2>
+                                <p>Note:<?= isset($film['rating']) && $film['rating'] !== "" ? htmlspecialchars((float) $film['rating']) : 'Non renseignée'; ?></p>
+                                <hr>
+                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                    <a href="" class="btn btn-sm btn-dark"></a>
+                                    <a href="" class="btn btn-sm btn-secondary"></a>
+                                    <a href="" class="btn btn-sm btn-danger"></a>
+                                </div>
+                            </article>
+                        <?php endforeach ?>
+                    </div>
+                </div>
+            </div>
+            <?php else : ?>
+                <p class="mt-5">Aucun film ajouté à la liste.</p>
+            <?php endif?>
+
      </main>
 
     <?php include_once __DIR__ ."/../partials/footer.php";?>
