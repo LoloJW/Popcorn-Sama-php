@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () =>{
    const counter = document.getElementById('txt-counter');
    const maxLength = 1000;
 
-   textarea.addEventListener('input', () =>{
+function editCounter(){
         const length = textarea.value.length;
         counter.textContent = `${length} / ${maxLength} caratères`;
 
@@ -15,5 +15,9 @@ document.addEventListener("DOMContentLoaded", () =>{
             counter.classList.remove('text-danger');
         }
         
-    });
+    };
+editCounter();
+
+textarea.addEventListener('input', editCounter);
 });
+
